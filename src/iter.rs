@@ -92,18 +92,18 @@ struct RawIter<T> {
 }
 
 impl<T> RawIter<T> {
-    fn new(slice: &[T]) -> Self {
-        let end = if mem::size_of::<T>() == 0 {
-            (slice.as_ptr() as usize + slice.len()) as *const T
-        } else {
-            unsafe { slice.as_ptr().add(slice.len()) }
-        };
-
-        Self {
-            begin: slice.as_ptr(),
-            end,
-        }
-    }
+    // fn new(slice: &[T]) -> Self {
+    //     let end = if mem::size_of::<T>() == 0 {
+    //         (slice.as_ptr() as usize + slice.len()) as *const T
+    //     } else {
+    //         unsafe { slice.as_ptr().add(slice.len()) }
+    //     };
+    //
+    //     Self {
+    //         begin: slice.as_ptr(),
+    //         end,
+    //     }
+    // }
 
     fn len(&self) -> usize {
         if mem::size_of::<T>() == 0 {
