@@ -16,6 +16,12 @@ use std::ptr;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NotEnoughSpaceError;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum InsertError {
+    IndexOutOfRange,
+    NotEnoughSpace,
+}
+
 #[derive(Debug, Clone)]
 pub struct StackVec<T, const N: usize> {
     data: [T; N],
@@ -105,17 +111,12 @@ impl<T, const N: usize> StackVec<T, N> {
     }
 
     pub fn try_push(&mut self, value: T) -> Result<(), NotEnoughSpaceError> {
-        #[cold]
-        #[inline(always)]
-        fn not_enough_space() -> NotEnoughSpaceError {
-            NotEnoughSpaceError
-        }
-
         if self.len < Self::CAPACITY {
             unsafe { self.push_unchecked(value); }
             Ok(())
         } else {
-            Err(not_enough_space())
+            cold();
+            Err(NotEnoughSpaceError)
         }
     }
 
@@ -153,6 +154,20 @@ impl<T, const N: usize> StackVec<T, N> {
         }
 
         unsafe { self.insert_unchecked(idx, value); }
+    }
+
+    pub fn try_insert(&mut self, idx: usize, value: T) -> Result<(), InsertError> {
+        if idx > self.len {
+            cold();
+            return Err(InsertError::IndexOutOfRange);
+        }
+        if self.len >= Self::CAPACITY {
+            cold();
+            return Err(InsertError::NotEnoughSpace);
+        }
+
+        unsafe { self.insert_unchecked(idx, value); }
+        Ok(())
     }
 
     pub unsafe fn insert_unchecked(&mut self, idx: usize, value: T) {
@@ -310,3 +325,6 @@ impl<T, const N: usize> From<[T; N]> for StackVec<T, N> {
 //         Self::from_array(arr).ok_or(NotEnoughSpaceError)
 //     }
 // }
+
+#[cold]
+fn cold() {}
