@@ -2,7 +2,7 @@
 name = "stack_vec"
 description = "Vector-like data structure located on the stack"
 authors = ["Sebastian Wojciechowski"]
-version = "0.1.0"
+version = "0.2.0"
 edition = "2018"
 rust-version = "1.51.0" # stabilized const generics
 keywords = ["vec", "vector", "stack"]
