@@ -16,18 +16,16 @@ fn new() {
 
 #[test]
 fn push() {
-    type Sv = StackVec<i32, 4>;
-
-    let mut vec = Sv::new();
+    let mut vec = StackVec::<_, 7>::new();
     vec.push(0);
-    assert_eq!(vec, Sv::from_array([0]).unwrap());
+    assert_eq!(vec, stack_vec![0]);
     vec.push(1);
-    assert_eq!(vec, Sv::from_array([0, 1]).unwrap());
+    assert_eq!(vec, stack_vec![0, 1]);
     let push_res = vec.try_push(2);
-    assert_eq!(vec, Sv::from_array([0, 1, 2]).unwrap());
+    assert_eq!(vec, stack_vec![0, 1, 2]);
     assert_eq!(push_res, Ok(()));
     vec.push(3);
-    assert_eq!(vec, Sv::from_array([0, 1, 2, 3]).unwrap());
+    assert_eq!(vec, stack_vec![0, 1, 2, 3]);
     assert_eq!(vec.try_push(4), Err(NotEnoughSpaceError));
 }
 
