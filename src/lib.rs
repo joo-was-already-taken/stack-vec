@@ -13,7 +13,7 @@
 //! ```
 
 // uncomment for linting, comment before committing (backward compatibility)
-#![deny(unsafe_op_in_unsafe_fn)]
+// #![deny(unsafe_op_in_unsafe_fn)]
 
 mod iter;
 pub use iter::IntoIter;
