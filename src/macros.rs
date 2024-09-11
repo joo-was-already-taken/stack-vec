@@ -4,14 +4,12 @@ macro_rules! stack_vec {
         $crate::StackVec::new()
     };
     ($($elem:expr),+ $(,)?) => {
-        // $crate::StackVec::from([$($elem),*])
         $crate::StackVec::from_array([$($elem),*]).unwrap()
     };
     ($($elem:expr),*; cap = $cap:expr) => {
         $crate::StackVec::<_, $cap>::from_array([$($elem),*]).unwrap()
     };
     ($elem:expr; $length:expr) => {
-        // $crate::StackVec::from([$elem; $length])
         $crate::StackVec::from_elem($elem, $length).unwrap()
     };
 }

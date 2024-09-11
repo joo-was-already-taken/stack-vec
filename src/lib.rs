@@ -66,11 +66,6 @@ impl<T, const N: usize> StackVec<T, N> {
     }
 
     #[inline]
-    pub const fn capacity(&self) -> usize {
-        Self::CAPACITY
-    }
-
-    #[inline]
     pub const fn as_ptr(&self) -> *const T {
         self.data.as_ptr()
     }
