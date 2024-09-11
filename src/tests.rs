@@ -83,3 +83,30 @@ fn remove() {
     assert_eq!(vec.try_remove(1), None);
     assert_eq!(vec.try_remove(0), None);
 }
+
+#[test]
+fn truncate() {
+    let mut vec = stack_vec![0, 1, 2, 3; cap = 4];
+    vec.truncate(2);
+    assert_eq!(vec, stack_vec![0, 1]);
+    vec.truncate(100000);
+    assert_eq!(vec, stack_vec![0, 1]);
+    vec.truncate(0);
+    assert_eq!(vec, stack_vec![]);
+}
+
+#[test]
+fn resize() {
+    let mut vec = stack_vec![0, 1, 2, 3, 4; cap = 10];
+    vec.resize(9, 69);
+    assert_eq!(vec, stack_vec![0, 1, 2, 3, 4, 69, 69, 69, 69]);
+    vec.resize(0, 123);
+    assert_eq!(vec, stack_vec![]);
+}
+
+#[test]
+#[should_panic]
+fn resize_fail() {
+    let mut vec = stack_vec![0, 1, 2; cap = 5];
+    vec.resize(6, 1111);
+}
