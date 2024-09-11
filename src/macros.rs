@@ -12,6 +12,16 @@ macro_rules! stack_vec {
     ($elem:expr; $length:expr) => {
         $crate::StackVec::from_elem($elem, $length).unwrap()
     };
+    ($elem:expr; $length:expr; cap = $cap:expr) => {
+        // $crate::StackVec::from_elem($elem, $length).unwrap()
+        {
+            let mut vec = $crate::StackVec::<_, $cap>::new();
+            for _ in 0..$length {
+                vec.push($elem);
+            }
+            vec
+        }
+    };
 }
 
 #[cfg(test)]

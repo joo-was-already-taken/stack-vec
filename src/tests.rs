@@ -34,7 +34,7 @@ fn push_zst() {
     #[derive(Clone, Copy)]
     struct Zst;
 
-    let mut vec = StackVec::from([Zst; 11]);
+    let mut vec = stack_vec![Zst; 11; cap = 11];
     assert_eq!(vec.len(), 11);
     assert_eq!(vec.try_push(Zst), Err(NotEnoughSpaceError));
     assert_eq!(vec.len(), 11);
