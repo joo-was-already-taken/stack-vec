@@ -16,7 +16,7 @@ fn new() {
 
 #[test]
 fn push() {
-    let mut vec = StackVec::<_, 7>::new();
+    let mut vec = StackVec::<_, 4>::new();
     vec.push(0);
     assert_eq!(vec, stack_vec![0]);
     vec.push(1);
@@ -54,4 +54,32 @@ fn insert() {
     assert_eq!(vec, stack_vec![0, 1, 2, 3, 4, 5, 6]);
     assert_eq!(vec.try_insert(4, 69), Err(InsertError::NotEnoughSpace));
     assert_eq!(vec.try_insert(11, 69), Err(InsertError::IndexOutOfRange));
+}
+
+#[test]
+fn pop() {
+    let mut vec = stack_vec![1, 2, 3; cap = 3];
+    assert_eq!(vec.pop(), Some(3));
+    assert_eq!(vec, stack_vec![1, 2]);
+    assert_eq!(vec.pop(), Some(2));
+    assert_eq!(vec, stack_vec![1]);
+    assert_eq!(vec.pop(), Some(1));
+    assert_eq!(vec, stack_vec![]);
+    assert_eq!(vec.pop(), None);
+}
+
+#[test]
+fn remove() {
+    let mut vec = stack_vec![1, 2, 3, 4; cap = 4];
+    vec.remove(1);
+    assert_eq!(vec, stack_vec![1, 3, 4]);
+    assert_eq!(vec.try_remove(3), None);
+    vec.remove(2);
+    assert_eq!(vec, stack_vec![1, 3]);
+    vec.remove(0);
+    assert_eq!(vec, stack_vec![3]);
+    vec.remove(0);
+    assert_eq!(vec, stack_vec![]);
+    assert_eq!(vec.try_remove(1), None);
+    assert_eq!(vec.try_remove(0), None);
 }

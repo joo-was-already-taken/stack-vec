@@ -199,6 +199,15 @@ impl<T, const N: usize> StackVec<T, N> {
         unsafe { self.remove_unchecked(idx) }
     }
 
+    pub fn try_remove(&mut self, idx: usize) -> Option<T> {
+        if idx >= self.len {
+            cold();
+            None
+        } else {
+            unsafe { Some(self.remove_unchecked(idx)) }
+        }
+    }
+
     pub unsafe fn remove_unchecked(&mut self, idx: usize) -> T {
         unsafe {
             self.len -= 1;
