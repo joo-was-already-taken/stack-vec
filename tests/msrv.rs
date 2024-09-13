@@ -5,8 +5,7 @@ use std::process::Command;
 /// with `cargo msrv verify`.
 fn msrv() -> Result<(), Box<dyn std::error::Error>> {
     let output = Command::new("cargo")
-        .arg("msrv")
-        .arg("verify")
+        .args(["msrv", "verify"])
         .output()?;
 
     if !output.status.success() {
