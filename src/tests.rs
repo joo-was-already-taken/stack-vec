@@ -110,3 +110,73 @@ fn resize_fail() {
     let mut vec = stack_vec![0, 1, 2; cap = 5];
     vec.resize(6, 1111);
 }
+
+mod drop {
+    use super::*;
+
+    use std::cell::Cell;
+    use std::rc::Rc;
+
+    struct DropTracker {
+        dropped: Rc<Cell<bool>>,
+    }
+
+    impl DropTracker {
+        pub fn new() -> Self {
+            Self {
+                dropped: Rc::new(Cell::new(false)),
+            }
+        }
+
+        pub fn dropped(&self) -> Rc<Cell<bool>> {
+            Rc::clone(&self.dropped)
+        }
+    }
+
+    impl Clone for DropTracker {
+        fn clone(&self) -> Self {
+            Self {
+                dropped: Rc::new(Cell::new(self.dropped.get())),
+            }
+        }
+    }
+
+    impl Drop for DropTracker {
+        fn drop(&mut self) {
+            self.dropped.set(true);
+        }
+    }
+
+    fn assert_drop<const N: usize>(
+        vec_len: usize,
+        func: fn(StackVec<DropTracker, N>),
+    ) {
+        let vec: StackVec<_, N> = (0..vec_len)
+            .map(|_| DropTracker::new())
+            .collect();
+        let tracker_refs: Vec<Rc<_>> = vec.iter()
+            .map(|tracker| tracker.dropped())
+            .collect();
+        // do some operations on `vec` and drop it
+        func(vec);
+        assert!(tracker_refs.iter().all(|t| t.get()));
+    }
+
+    #[test]
+    fn stack_vec() {
+        fn func(mut vec: StackVec<DropTracker, 10>) {
+            vec.pop();
+            vec.truncate(5);
+        }
+        assert_drop(10, func);
+    }
+
+    #[test]
+    fn into_iter() {
+        fn func(vec: StackVec<DropTracker, 40>) {
+            let iter = vec.into_iter();
+            let _ = iter.take(4);
+        }
+        assert_drop::<40>(10, func);
+    }
+}
