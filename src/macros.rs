@@ -10,7 +10,7 @@ macro_rules! stack_vec {
         $crate::StackVec::<_, $cap>::from_array([$($elem),*]).unwrap()
     };
     ($elem:expr; $length:expr) => {
-        $crate::StackVec::from_elem($elem, $length).unwrap()
+        $crate::StackVec::from_value($elem, $length).unwrap()
     };
     ($elem:expr; $length:expr; cap = $cap:expr) => {
         // $crate::StackVec::from_elem($elem, $length).unwrap()

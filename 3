@@ -17,11 +17,7 @@ impl<T, const N: usize> IntoIter<T, N> {
 
 impl<T, const N: usize> Drop for IntoIter<T, N> {
     fn drop(&mut self) {
-        unsafe {
-            for elem in &mut self.data[0..self.initial_len] {
-                ptr::drop_in_place(elem.as_mut_ptr() as *mut T);
-            }
-        }
+        // for 
     }
 }
 
@@ -30,18 +26,14 @@ impl<T, const N: usize> IntoIterator for StackVec<T, N> {
     type IntoIter = IntoIter<T, N>;
 
     fn into_iter(self) -> Self::IntoIter {
-        unsafe {
-            let me = ManuallyDrop::new(self);
-            let mut into_iter = IntoIter {
-                raw_iter: RawIter {
-                    begin: me.data.as_ptr() as *const T,
-                    end: me.data.as_ptr().add(me.len) as *const T,
-                },
-                initial_len: me.len,
-                data: MaybeUninit::<[MaybeUninit<T>; N]>::uninit().assume_init(),
-            };
-            ptr::copy_nonoverlapping(me.data.as_ptr(), into_iter.data.as_mut_ptr(), me.len);
-            into_iter
+        let me = ManuallyDrop::new(self);
+        IntoIter {
+            raw_iter: RawIter {
+                begin: me.as_ptr(),
+                end: unsafe { me.as_ptr().add(me.len) },
+            },
+            initial_len: me.len(),
+            data: me.take().data,
         }
     }
 }
